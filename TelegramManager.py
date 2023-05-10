@@ -1,12 +1,16 @@
+#import pyevsim
+from pyevsim.behavior_model_executor import BehaviorModelExecutor
 
-from config import confingManger
+#import telegram
+from telegram import * 
+from telegram.ext import *
 
+class TelegramManagerModel(BehaviorModelExecutor):
+    def __init__(self, inst_t, dest_t, mname, ename, engine, config):
+        super().__init__(inst_t, dest_t, mname, ename)
 
+        
+        
+        telegram_token = config.telegram_token
 
-# ConfigManager 객체 생성
-config_manager = confingManger('instance/config.json')
-
-# Config 값 가져오기
-telegram_token = config_manager.telegram_token
-
-print(telegram_token)
+        print(telegram_token)

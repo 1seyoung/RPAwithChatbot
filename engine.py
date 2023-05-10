@@ -1,12 +1,36 @@
+#import pyevsim 
+from pyevsim.system_simulator import SystemSimulator
+from pyevsim.behavior_model_executor import BehaviorModelExecutor
+from pyevsim.definition import *
 
+#import config
 from config import confingManger
 
+#import model
+from TelegramManager import TelegramManagerModel
+
+class systemEngine():
+    def __init__(self) :
+        
+        #config -> data type : json
+        self.config = confingManger('instance/config.json')
+
+        #register simulation engine -> (engine_name, mode, engine operation_period)
+        self.ss = SystemSimulator()
+        ename = "mainEngine"
+
+        self.engine = self.ss.register_engine(ename,"REAL_TIME",1)
+
+        #create engine input port
+        self.ss.get_engine(ename).insert_input_port("start")
+
+        #define DEVS model (class)
+        Tmanager = TelegramManagerModel(0, Infinite,"telegram_manager",ename,self.config)
+    
+    def start(self):
+        self.engine.simulate()
 
 
-# ConfigManager 객체 생성
-config_manager = confingManger('instance/config.json')
-
-# Config 값 가져오기
-telegram_token = config_manager.telegram_token
-
-print(telegram_token)
+if __name__ == "__main__":
+    pysim = systemEngine()
+    pysim.start()
