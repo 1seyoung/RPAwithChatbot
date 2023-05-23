@@ -25,7 +25,7 @@ class systemEngine():
         self.ss.get_engine(ename).insert_input_port("start")
 
         #define DEVS model (class)
-        Tmanager = TelegramManagerModel(0, Infinite,"telegram_manager",ename,self.config)
+        Tmanager = TelegramManagerModel(0, Infinite,"telegram_manager",ename, self.engine,self.config)
     
     def start(self):
         self.engine.simulate()
