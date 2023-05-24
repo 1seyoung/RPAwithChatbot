@@ -1,5 +1,5 @@
-from telegram import * 
-from telegram.ext import *
+from telegram import Update,InlineKeyboardButton,InlineKeyboardMarkup
+from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters, ConversationHandler,CallbackQueryHandler, CallbackContext
 
 from pygsheets import Spreadsheet
 
@@ -11,3 +11,6 @@ class registerHandler():
         #explain the role of handler
 
         return f"/register : register use using employee(student) ID"
+    
+    def get_handler(self) -> Dispatcher:
+        return self.handler

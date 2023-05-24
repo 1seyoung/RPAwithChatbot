@@ -11,10 +11,10 @@ import sys,os
 import signal
 
 class TelegramManagerModel(BehaviorModelExecutor):
-    def __init__(self, inst_t, dest_t, mname, ename, engine, config):
+    def __init__(self, inst_t, dest_t, mname, ename, engine, config, gm):
         super().__init__(inst_t, dest_t, mname, ename)
 
-        
+        self.gm = gm
         self.config = config
 
         signal.signal(signal.SIGINT,  self.signal_handler)
@@ -28,13 +28,6 @@ class TelegramManagerModel(BehaviorModelExecutor):
 
 
         #custom handler with conversation
-
-
-        #dispatcher.add_handler
-        # start handler : The role of the bot at the beginning is to provied guide & assistance
-
-        dispatcher.add_handler(CommandHandler('start', self.start))
-
         self.handlers = {
             registerHandler()
 
@@ -42,6 +35,12 @@ class TelegramManagerModel(BehaviorModelExecutor):
         
         for handler in self.handlers:
             dispatcher.add_handler(handler.get_handler())
+
+
+        #dispatcher.add_handler
+        # start handler : The role of the bot at the beginning is to provied guide & assistance
+
+        dispatcher.add_handler(CommandHandler('start', self.start))
 
 
         #start the bot

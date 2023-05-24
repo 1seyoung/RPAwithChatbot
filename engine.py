@@ -6,6 +6,9 @@ from pyevsim.definition import *
 #import config
 from config import confingManger
 
+#import googlesheet
+from GsheetManager import gsheetManagerModel
+
 #import model
 from TelegramManager import TelegramManagerModel
 
@@ -14,6 +17,7 @@ class systemEngine():
         
         #config -> data type : json
         self.config = confingManger('instance/config.json')
+        self.gm = gsheetManagerModel(self.config)
 
         #register simulation engine -> (engine_name, mode, engine operation_period)
         self.ss = SystemSimulator()
@@ -25,7 +29,7 @@ class systemEngine():
         self.ss.get_engine(ename).insert_input_port("start")
 
         #define DEVS model (class)
-        Tmanager = TelegramManagerModel(0, Infinite,"telegram_manager",ename, self.engine,self.config)
+        Tmanager = TelegramManagerModel(0, Infinite,"telegram_manager",ename, self.engine, self.config, self.gm)
     
     def start(self):
         self.engine.simulate()
