@@ -13,9 +13,9 @@ from telegram.ext import (
 )
 
 #custom handler
-from handler.RegisterHandler import registerHandler
-import sys,os
-import signal
+from handler.RegisterHandler import RegisterHandler
+from handler.InfoHandler import InfoHandler
+
 
 class TelegramManagerModel(BehaviorModelExecutor):
     def __init__(self, inst_t, dest_t, mname, ename, engine, config, gm):
@@ -25,23 +25,20 @@ class TelegramManagerModel(BehaviorModelExecutor):
         self.config = config
 
 
-        #self.updater = Updater(self.config.telegram_token)
-        self.application = Application.builder().token("self.config.telegram_token").build()
-        #dispatcher = self.updater.dispatcher
+
+        self.application = Application.builder().token(self.config.telegram_token).build()
+
 
 
         #custom handler with conversation
         self.handlers = {
-            registerHandler()
+            RegisterHandler(self.gm),
+            InfoHandler(self.gm)
 
         }
         
         for handler in self.handlers:
             self.application.add_handler(handler.get_handler())
-
-
-        #dispatcher.add_handler
-        # start handler : The role of the bot at the beginning is to provied guide & assistance
 
         self.application.add_handler(CommandHandler('start', self.start))
 
@@ -50,12 +47,12 @@ class TelegramManagerModel(BehaviorModelExecutor):
         self.application.run_polling()
 
 
-    def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
         resp = ""
         
         for handler in self.handlers:
             resp += handler.get_help()
             resp += "\n"
-        update.message.reply_text(resp)   
+        await update.message.reply_text(resp)   
        

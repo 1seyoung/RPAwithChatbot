@@ -2,6 +2,11 @@ import pygsheets
 from config import confingManger
 
 import json
+import pandas as pd
+
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s', filename='app.log', filemode='a')
+
 
 class gsheetManagerModel():
     def __init__(self) :
@@ -24,8 +29,34 @@ class gsheetManagerModel():
         return worksheet_names
     
 
+    def get_admin_info(self):
+        wks = self.sh.worksheet('title','user')
+        df = wks.get_as_df()
 
-gc = gsheetManagerModel()
+        admin_info = df[df['Permission'] == 'Admin'].values.tolist()
+
+        return admin_info
+    
+    def update_table(self, wks_name, data):
+
+        wks = self.sh.worksheet('title', wks_name)
+        wks.append_table(data)
+
+        logging.info(f'Appended new data to worksheet: {data} in "{wks_name}" worksheet')
 
 
-#print(gc.worksheet_to_json(gc.Cwks))
+    def get_df_to_list(self, wks_name,type):
+        wks = self.sh.worksheet('title', wks_name)
+        df = wks.get_as_df()
+
+        if type == "df" :
+            return df
+        
+        elif type == "list" :
+            df_list = []
+            for index, row in df.iterrows():
+                row_list = row.values.tolist()
+                df_list.append(row_list)
+
+            return df_list
+
