@@ -1,16 +1,25 @@
-from telegram import Update,InlineKeyboardButton,InlineKeyboardMarkup
-from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters, ConversationHandler,CallbackQueryHandler, CallbackContext
 
-from pygsheets import Spreadsheet
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    filters,
+)
+
 
 class registerHandler():
     def __init__(self):
-        pass
+
+        self.handler = ConversationHandler()
 
     def get_help(self):
         #explain the role of handler
 
         return f"/register : register use using employee(student) ID"
     
-    def get_handler(self) -> Dispatcher:
+    def get_handler(self) :
+        #Telegram Manager 36~37 line
         return self.handler

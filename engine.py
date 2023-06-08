@@ -17,7 +17,7 @@ class systemEngine():
         
         #config -> data type : json
         self.config = confingManger('instance/config.json')
-        self.gm = gsheetManagerModel(self.config)
+        self.gm = gsheetManagerModel()
 
         #register simulation engine -> (engine_name, mode, engine operation_period)
         self.ss = SystemSimulator()

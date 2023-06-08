@@ -2,8 +2,15 @@
 from pyevsim.behavior_model_executor import BehaviorModelExecutor
 
 #import telegram
-from telegram import Update, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    filters,
+)
 
 #custom handler
 from handler.RegisterHandler import registerHandler
@@ -17,14 +24,10 @@ class TelegramManagerModel(BehaviorModelExecutor):
         self.gm = gm
         self.config = config
 
-        signal.signal(signal.SIGINT,  self.signal_handler)
-        signal.signal(signal.SIGABRT, self.signal_handler)
-        signal.signal(signal.SIGTERM, self.signal_handler)
 
-
-
-        self.updater = Updater(self.config.telegram_token)
-        dispatcher = self.updater.dispatcher
+        #self.updater = Updater(self.config.telegram_token)
+        self.application = Application.builder().token("self.config.telegram_token").build()
+        #dispatcher = self.updater.dispatcher
 
 
         #custom handler with conversation
@@ -34,20 +37,20 @@ class TelegramManagerModel(BehaviorModelExecutor):
         }
         
         for handler in self.handlers:
-            dispatcher.add_handler(handler.get_handler())
+            self.application.add_handler(handler.get_handler())
 
 
         #dispatcher.add_handler
         # start handler : The role of the bot at the beginning is to provied guide & assistance
 
-        dispatcher.add_handler(CommandHandler('start', self.start))
+        self.application.add_handler(CommandHandler('start', self.start))
 
 
         #start the bot
-        self.updater.start_polling()
+        self.application.run_polling()
 
 
-    def start(self, update: Update, context: CallbackContext) -> None:
+    def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
         resp = ""
         
@@ -56,11 +59,3 @@ class TelegramManagerModel(BehaviorModelExecutor):
             resp += "\n"
         update.message.reply_text(resp)   
        
-    def signal_handler(self, sig, frame):
-        print("Terminating Monitoring System")
-		
-        if not self.is_terminating:
-            self.is_terminating = True
-            self.updater.stop()
-		
-        sys.exit(0)
