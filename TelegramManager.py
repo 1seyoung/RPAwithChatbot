@@ -17,6 +17,7 @@ from telegram.ext import (
 #custom handler
 from handler.RegisterHandler import RegisterHandler
 from handler.InfoHandler import InfoHandler
+from handler.FileHandler import FileHandler
 
 
 class TelegramManagerModel(BehaviorModelExecutor):
@@ -35,7 +36,8 @@ class TelegramManagerModel(BehaviorModelExecutor):
         #custom handler with conversation
         self.handlers = {
             RegisterHandler(self.gm),
-            InfoHandler(self.gm)
+            InfoHandler(self.gm),
+            FileHandler(self.gm,self.config)
 
         }
         

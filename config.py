@@ -11,3 +11,6 @@ class confingManger:
         #pygsheets
         self.gsheet_api = config_dict["googlesheet"]["api_key"]
         self.gsheet_name = config_dict["googlesheet"]["sheetname"]
+
+        #file_foder
+        self.doc_path = config_dict["path"]["doc_folder"]
