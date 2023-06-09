@@ -22,7 +22,7 @@ class InfoHandler():
 
 
         self.handler = ConversationHandler(
-            entry_points = [CommandHandler('info',self.handle_start)],
+            entry_points = [CallbackQueryHandler(self.handle_start, pattern='^info$')],
             states ={
                 SELECT_TASK :[CallbackQueryHandler(self.handle_get_task)],
                 SELECT_TASK_DETAIL:[CallbackQueryHandler(self.handle_get_task_detail)],
@@ -32,9 +32,7 @@ class InfoHandler():
         )
 
     def get_help(self):
-        #explain the role of handler
-
-        return "/info : 행정 정보 확인"
+        return [InlineKeyboardButton("행정 정보 확인", callback_data= "info")]
     
     def get_handler(self) :
         #Telegram Manager 36~37 line
@@ -47,7 +45,10 @@ class InfoHandler():
         return ConversationHandler.END
     
     async def handle_start(self,update: Update, context: ContextTypes.DEFAULT_TYPE):
-        context.user_data['telegramID'] = update.effective_chat.id
+        query = update.callback_query
+        await query.answer()
+
+        #context.user_data['telegramID'] = update.effective_chat.id
 
         keyboard=[]
         task_list = self.gm.get_df_to_list("administrative_task_code","list")
@@ -56,7 +57,7 @@ class InfoHandler():
         
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        await update.message.reply_text("행정 정보를 확인하고싶은 사업(과제)을 선택해주세요", reply_markup=reply_markup)
+        await query.edit_message_text("행정 정보를 확인하고싶은 사업(과제)을 선택해주세요", reply_markup=reply_markup)
 
         return SELECT_TASK
   

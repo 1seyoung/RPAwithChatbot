@@ -29,11 +29,12 @@ class RegisterHandler():
 
         #GsheetManager class define
         self.gm = gm
+
         
 
 
         self.handler = ConversationHandler(
-            entry_points =[CommandHandler('register', self.handle_start)],
+            entry_points =[CallbackQueryHandler(self.handle_start, pattern='^register$')],
             states ={
                 CODE : [MessageHandler(filters.TEXT & ~(filters.COMMAND), self.handle_get_code)],
                 NAME : [MessageHandler(filters.TEXT & ~(filters.COMMAND), self.handle_get_name)],
@@ -43,10 +44,9 @@ class RegisterHandler():
             fallbacks=[CommandHandler('cancel', self.cancel)]
         )
 
-    def get_help(self):
-        #explain the role of handler
 
-        return "/register : 사용자 등록"
+    def get_help(self):
+        return [InlineKeyboardButton("사용자 등록", callback_data= "register")]
     
     def get_handler(self) :
         #Telegram Manager 36~37 line
@@ -59,18 +59,16 @@ class RegisterHandler():
         return ConversationHandler.END
     
     async def handle_start(self,update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if update.message.chat.type == "private":
-            await update.message.reply_text('교번(학번)을 입력해주세요')   
-            context.user_data['telegramID'] = update.effective_chat.id
+        query = update.callback_query
+        await query.answer()
+        await query.edit_message_text('교번(학번)을 입력해주세요')   
 
-            return CODE
-        
-        else:
-            return ConversationHandler.END
+        return CODE
 
     
     async def handle_get_code(self,update: Update, context: ContextTypes.DEFAULT_TYPE):
         code = int(update.message.text)
+        context.user_data['telegramID'] = update.effective_chat.id
         context.user_data['EmployeeID'] = code
         await update.message.reply_text('성명을 입력해주세요')
         return NAME

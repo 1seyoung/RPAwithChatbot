@@ -2,7 +2,7 @@
 from pyevsim.behavior_model_executor import BehaviorModelExecutor
 
 #import telegram
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ForceReply, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -10,6 +10,8 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
+    CallbackQueryHandler,
+    CallbackContext
 )
 
 #custom handler
@@ -49,10 +51,12 @@ class TelegramManagerModel(BehaviorModelExecutor):
 
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         
-        resp = ""
+        keyboard = []
         
         for handler in self.handlers:
-            resp += handler.get_help()
-            resp += "\n"
-        await update.message.reply_text(resp)   
+            keyboard.append(handler.get_help())
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+            
+        await update.message.reply_text('사용할 메뉴를 선택해주세요', reply_markup=reply_markup)
        
